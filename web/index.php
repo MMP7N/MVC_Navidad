@@ -44,8 +44,10 @@ $map = array(
 
     // Padre / Madre
     'panelPadre'      => array('controller' => 'PadreController', 'action' => 'panel'),
-    'validarCarta'    => array('controller' => 'PadreController', 'action' => 'validarCarta'),
-    'quitarJuguete'   => array('controller' => 'PadreController', 'action' => 'quitarJuguete'),
+    'verCartaHijo' => ['controller' => 'PadreController', 'action' => 'verCartaHijo'],
+    'validarCarta' => ['controller' => 'PadreController', 'action' => 'validarCarta'],
+    'quitarJuguete' => ['controller' => 'PadreController', 'action' => 'quitarJuguete'],
+
 
     // Niño
     'panelNino'   => array('controller' => 'NinoController', 'action' => 'panel'),

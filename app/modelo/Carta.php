@@ -3,21 +3,14 @@
 
 class Carta
 {
-    // Obtener carta de un niño
     public static function getCartaByNino(int $idNino): ?array
     {
         $db = Database::getConexion();
-
-        $stmt = $db->prepare("
-            SELECT c.id, c.estado
-            FROM cartas c
-            WHERE c.id_nino = ?
-        ");
+        $stmt = $db->prepare("SELECT * FROM cartas WHERE id_nino = ?");
         $stmt->execute([$idNino]);
         return $stmt->fetch() ?: null;
     }
 
-    // Crear carta si no existe
     public static function crearCarta(int $idNino): int
     {
         $db = Database::getConexion();
@@ -26,7 +19,6 @@ class Carta
         return $db->lastInsertId();
     }
 
-    // Obtener juguetes de una carta
     public static function getJuguetesCarta(int $idCarta): array
     {
         $db = Database::getConexion();
@@ -40,13 +32,31 @@ class Carta
         return $stmt->fetchAll();
     }
 
-    // Añadir juguete a carta
     public static function addJuguete(int $idCarta, int $idJuguete): void
     {
         $db = Database::getConexion();
         $stmt = $db->prepare("
             INSERT IGNORE INTO carta_juguetes (id_carta, id_juguete)
             VALUES (?, ?)
+        ");
+        $stmt->execute([$idCarta, $idJuguete]);
+    }
+
+    // 🔴 NUEVO: Validar / desvalidar carta
+    public static function setEstado(int $idCarta, string $estado): void
+    {
+        $db = Database::getConexion();
+        $stmt = $db->prepare("UPDATE cartas SET estado = ? WHERE id = ?");
+        $stmt->execute([$estado, $idCarta]);
+    }
+
+    // 🔴 NUEVO: Quitar juguete
+    public static function quitarJuguete(int $idCarta, int $idJuguete): void
+    {
+        $db = Database::getConexion();
+        $stmt = $db->prepare("
+            DELETE FROM carta_juguetes
+            WHERE id_carta = ? AND id_juguete = ?
         ");
         $stmt->execute([$idCarta, $idJuguete]);
     }
