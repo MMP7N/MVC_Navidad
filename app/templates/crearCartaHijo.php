@@ -5,7 +5,6 @@
 <form method="POST">
     <?php foreach ($juguetes as $j): ?>
         <?php
-        // ¿Está este juguete ya en la carta?
         $checked = false;
         foreach ($juguetesEnCarta as $cj) {
             if ($cj['id'] == $j['id']) {

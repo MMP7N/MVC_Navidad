@@ -1,8 +1,22 @@
 <?php
-// app/modelo/Carta.php
+/**
+ * ================================================================
+ *  Clase Carta
+ *  ---------------------------------------------------------------
+ *  Modelo para manejar las cartas de los niños en la aplicación.
+ *  Funcionalidades:
+ *    - Crear y obtener cartas de un niño
+ *    - Añadir, quitar y listar juguetes de la carta
+ *    - Validar o desvalidar cartas
+ */
 
 class Carta
 {
+    /**
+     * Obtiene la carta asociada a un niño
+     * @param int $idNino ID del niño
+     * @return array|null
+     */
     public static function getCartaByNino(int $idNino): ?array
     {
         $db = Database::getConexion();
@@ -11,6 +25,11 @@ class Carta
         return $stmt->fetch() ?: null;
     }
 
+    /**
+     * Crea una nueva carta para un niño
+     * @param int $idNino
+     * @return int ID de la carta recién creada
+     */
     public static function crearCarta(int $idNino): int
     {
         $db = Database::getConexion();
@@ -19,6 +38,11 @@ class Carta
         return $db->lastInsertId();
     }
 
+    /**
+     * Obtiene todos los juguetes asociados a una carta
+     * @param int $idCarta
+     * @return array
+     */
     public static function getJuguetesCarta(int $idCarta): array
     {
         $db = Database::getConexion();
@@ -32,6 +56,11 @@ class Carta
         return $stmt->fetchAll();
     }
 
+    /**
+     * Añade un juguete a la carta
+     * @param int $idCarta
+     * @param int $idJuguete
+     */
     public static function addJuguete(int $idCarta, int $idJuguete): void
     {
         $db = Database::getConexion();
@@ -42,7 +71,11 @@ class Carta
         $stmt->execute([$idCarta, $idJuguete]);
     }
 
-    // 🔴 NUEVO: Validar / desvalidar carta
+    /**
+     * Cambia el estado de la carta (validada/pendiente)
+     * @param int $idCarta
+     * @param string $estado
+     */
     public static function setEstado(int $idCarta, string $estado): void
     {
         $db = Database::getConexion();
@@ -50,7 +83,11 @@ class Carta
         $stmt->execute([$estado, $idCarta]);
     }
 
-    // 🔴 NUEVO: Quitar juguete
+    /**
+     * Quita un juguete específico de la carta
+     * @param int $idCarta
+     * @param int $idJuguete
+     */
     public static function quitarJuguete(int $idCarta, int $idJuguete): void
     {
         $db = Database::getConexion();
@@ -60,12 +97,16 @@ class Carta
         ");
         $stmt->execute([$idCarta, $idJuguete]);
     }
-// Quita todos los juguetes de una carta
-public static function quitarTodosJuguetes(int $idCarta): void
-{
-    $db = Database::getConexion();
-    $stmt = $db->prepare("DELETE FROM carta_juguetes WHERE id_carta = ?");
-    $stmt->execute([$idCarta]);
-}
 
+    /**
+     * Quita todos los juguetes de una carta (útil para actualizar selección)
+     * @param int $idCarta
+     */
+    public static function quitarTodosJuguetes(int $idCarta): void
+    {
+        $db = Database::getConexion();
+        $stmt = $db->prepare("DELETE FROM carta_juguetes WHERE id_carta = ?");
+        $stmt->execute([$idCarta]);
+    }
 }
+?>

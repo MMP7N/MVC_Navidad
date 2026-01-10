@@ -3,42 +3,38 @@
  * ================================================================
  *  SessionManager
  *  ---------------------------------------------------------------
- *  Gestión segura de sesiones con:
- *    - Cookie hardening
- *    - Fingerprint (IP + User-Agent)
+ *  Gestión segura de sesiones para tu aplicación de "Cartas a Papá Noel"
+ *  Funcionalidades:
+ *    - Hardening de cookies (HttpOnly, Secure, SameSite)
+ *    - Fingerprint (IP + User-Agent) para evitar secuestro de sesión
  *    - Timeout por inactividad
- *    - RBAC numérico (Guest/Padre/Niño/Papa Noel)
- *    - Regeneración antifijación
- *
+ *    - Roles de usuario (Guest / Padre / Niño / Papá Noel)
+ *    - Regeneración de ID de sesión antifijación
+ *    - Funciones convenientes para validar rol y estado
  */
-
 class SessionManager
 {
-    // -------------------------------------------------------------
     // CONFIGURACIÓN
-    // -------------------------------------------------------------
     private string $loginPage;
     private int $timeout;
 
     // Niveles de acceso
-    private const ROLE_GUEST     = 0;  // Invitado
-    private const ROLE_PADRE     = 1;  // Padre/Madre
-    private const ROLE_NINO      = 2;  // Niño
-    private const ROLE_PAPANOEL  = 3;  // Papa Noel
+    private const ROLE_GUEST     = 0;
+    private const ROLE_PADRE     = 1;
+    private const ROLE_NINO      = 2;
+    private const ROLE_PAPANOEL  = 3;
 
-    public function __construct(
-        string $loginPage = 'index.php',
-        int $timeout = 600
-    ) {
+    /**
+     * Constructor: inicializa sesión y establece timeout
+     */
+    public function __construct(string $loginPage = 'index.php', int $timeout = 600)
+    {
         $this->loginPage = $loginPage;
         $this->timeout   = $timeout;
-
         $this->start();
     }
 
-    // -------------------------------------------------------------
-    // APERTURA SEGURA DE SESIÓN
-    // -------------------------------------------------------------
+    // INICIALIZACIÓN SEGURA DE LA SESIÓN
     public function start(array $options = []): void
     {
         $config = array_merge([
@@ -55,15 +51,14 @@ class SessionManager
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
 
+            // Inicializa nivel de invitado si no existe
             if (!isset($_SESSION['usuarioNivel'])) {
                 $_SESSION['usuarioNivel'] = self::ROLE_GUEST;
             }
         }
     }
 
-    // -------------------------------------------------------------
     // LOGIN Y LOGOUT
-    // -------------------------------------------------------------
     public function login($id, string $name, int $level): void
     {
         session_regenerate_id(true);
@@ -72,6 +67,7 @@ class SessionManager
         $_SESSION['usuarioNombre'] = $name;
         $_SESSION['usuarioNivel']  = $level;
 
+        // Fingerprint
         $_SESSION['remoteAddr'] = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
         $_SESSION['userAgent']  = $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown Agent';
 
@@ -93,19 +89,16 @@ class SessionManager
         exit;
     }
 
-    // -------------------------------------------------------------
-    // SEGURIDAD: FINGERPRINT + TIMEOUT
-    // -------------------------------------------------------------
+    // SEGURIDAD: VERIFICACIÓN DE FINGERPRINT Y TIMEOUT
     public function checkSecurity(): void
     {
         if (!$this->isLoggedIn()) {
             return;
         }
 
-        // Fingerprint
+        // Comprobación de IP + User-Agent
         $storedAddr  = $_SESSION['remoteAddr'] ?? '';
         $storedAgent = $_SESSION['userAgent'] ?? '';
-
         $currentAddr  = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
         $currentAgent = $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown Agent';
 
@@ -113,7 +106,7 @@ class SessionManager
             $this->logout();
         }
 
-        // Timeout
+        // Timeout por inactividad
         if (isset($_SESSION['lastActivity']) &&
             (time() - $_SESSION['lastActivity'] > $this->timeout)) {
             $this->logout();
@@ -127,32 +120,13 @@ class SessionManager
         $_SESSION['lastActivity'] = time();
     }
 
-    // -------------------------------------------------------------
-    // GETTERS
-    // -------------------------------------------------------------
-    public function getUserId()
-    {
-        return $_SESSION['usuarioId'] ?? null;
-    }
+    // GETTERS DE SESIÓN
+    public function getUserId()        { return $_SESSION['usuarioId'] ?? null; }
+    public function getUserName(): string { return $_SESSION['usuarioNombre'] ?? ''; }
+    public function getUserLevel(): int   { return $_SESSION['usuarioNivel'] ?? self::ROLE_GUEST; }
+    public function get(string $index)    { return $_SESSION[$index] ?? null; }
 
-    public function getUserName(): string
-    {
-        return $_SESSION['usuarioNombre'] ?? '';
-    }
-
-    public function getUserLevel(): int
-    {
-        return $_SESSION['usuarioNivel'] ?? self::ROLE_GUEST;
-    }
-
-    public function get(string $index)
-    {
-        return $_SESSION[$index] ?? null;       
-    }
-
-    // -------------------------------------------------------------
-    // ESTADO Y RBAC
-    // -------------------------------------------------------------
+    // ESTADO Y VALIDACIÓN DE ROLES
     public function isLoggedIn(): bool
     {
         return isset($_SESSION['usuarioId']) &&
@@ -165,19 +139,8 @@ class SessionManager
     }
 
     // Funciones convenientes para cada rol
-    public function isPadre(): bool
-    {
-        return $this->getUserLevel() === self::ROLE_PADRE;
-    }
-
-    public function isNino(): bool
-    {
-        return $this->getUserLevel() === self::ROLE_NINO;
-    }
-
-    public function isPapaNoel(): bool
-    {
-        return $this->getUserLevel() === self::ROLE_PAPANOEL;
-    }
+    public function isPadre(): bool      { return $this->getUserLevel() === self::ROLE_PADRE; }
+    public function isNino(): bool       { return $this->getUserLevel() === self::ROLE_NINO; }
+    public function isPapaNoel(): bool   { return $this->getUserLevel() === self::ROLE_PAPANOEL; }
 }
 ?>

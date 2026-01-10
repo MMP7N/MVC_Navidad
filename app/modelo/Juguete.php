@@ -1,9 +1,20 @@
 <?php
-// app/modelo/Juguete.php
+/**
+ * ================================================================
+ *  Clase Juguete
+ *  ---------------------------------------------------------------
+ *  Modelo para gestionar los juguetes de la aplicación.
+ *  Funcionalidades:
+ *    - Listar todos los juguetes
+ *    - Insertar un nuevo juguete (solo Papá Noel)
+ */
 
 class Juguete
 {
-    // Obtener todos los juguetes
+    /**
+     * Obtiene todos los juguetes disponibles
+     * @return array Array de juguetes
+     */
     public static function getAll(): array
     {
         $db = Database::getConexion();
@@ -11,7 +22,12 @@ class Juguete
         return $stmt->fetchAll();
     }
 
-    // Insertar juguete (Papá Noel)
+    /**
+     * Inserta un nuevo juguete en la base de datos
+     * @param string $nombre Nombre del juguete
+     * @param string $descripcion Descripción del juguete
+     * @param float $precio Precio del juguete
+     */
     public static function insertar(string $nombre, string $descripcion, float $precio): void
     {
         $db = Database::getConexion();
@@ -22,3 +38,4 @@ class Juguete
         $stmt->execute([$nombre, $descripcion, $precio]);
     }
 }
+?>
