@@ -55,9 +55,10 @@ $map = array(
     'verCarta'    => array('controller' => 'NinoController', 'action' => 'verCarta'),
 
     // Papa Noel
-    'panelPapaNoel' => array('controller' => 'PapaNoelController', 'action' => 'panel'),
-    'insertarJuguete' => array('controller' => 'PapaNoelController', 'action' => 'insertarJuguete'),
-    'verCartas'      => array('controller' => 'PapaNoelController', 'action' => 'verCartas')
+    'panelPapaNoel' => ['controller' => 'PapaNoelController', 'action' => 'panel'],
+    'insertarJuguete' => ['controller' => 'PapaNoelController', 'action' => 'insertarJuguete'],
+    'verCartas' => ['controller' => 'PapaNoelController', 'action' => 'verCartas'],
+
 );
 
 /*

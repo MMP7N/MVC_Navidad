@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="public/css/estilos.css">
 <h2>Panel de <?= htmlspecialchars($session->getUserName()) ?></h2>
 
 <h3>Crear un nuevo niño</h3>
