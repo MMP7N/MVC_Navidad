@@ -26,23 +26,24 @@ class PadreController
     }
 
     public function verCartaHijo(): void
-    {
-        $session = $this->session; // ✅ CLAVE
+{
+    $session = $this->session; 
 
-        $idNino = (int)$_GET['idNino'];
-        $nino = Nino::getById($idNino);
+    $idNino = (int)$_GET['idNino'];
+    $nino = Nino::getById($idNino);
 
-        if (!$nino || $nino['id_padre'] !== $this->session->getUserId()) {
-            header("Location: index.php?ctl=error");
-            exit;
-        }
-
-        $carta = Carta::getCartaByNino($idNino);
-        $juguetes = $carta ? Carta::getJuguetesCarta($carta['id']) : [];
-
-        $titulo = "Carta del hijo";
-        require __DIR__ . '/../templates/verCartaHijo.php';
+    if (!$nino || $nino->id_padre !== $this->session->getUserId()) {
+        header("Location: index.php?ctl=error");
+        exit;
     }
+
+    $carta = Carta::getCartaByNino($idNino);
+    $juguetes = $carta ? Carta::getJuguetesCarta($carta->id) : [];
+
+    $titulo = "Carta del hijo";
+    require __DIR__ . '/../templates/verCartaHijo.php';
+}
+
 
     public function validarCarta(): void
     {
@@ -66,7 +67,7 @@ class PadreController
 
     public function crearNino(): void
     {
-        $session = $this->session; // ✅ CLAVE
+        $session = $this->session; 
         $errores = [];
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
