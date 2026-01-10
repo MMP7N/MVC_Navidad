@@ -8,6 +8,7 @@ class PadreController
     public function __construct()
     {
         $this->session = new SessionManager();
+        $this->session->checkSecurity();
 
         if (!$this->session->isPadre()) {
             header("Location: index.php?ctl=error");
@@ -17,18 +18,21 @@ class PadreController
 
     public function panel(): void
     {
+        $session = $this->session; // ✅ CLAVE
         $hijos = Nino::getHijosByPadre($this->session->getUserId());
         $titulo = "Panel Padre";
+
         require __DIR__ . '/../templates/panelPadre.php';
     }
 
-    // 🔴 Ver carta de un hijo
     public function verCartaHijo(): void
     {
+        $session = $this->session; // ✅ CLAVE
+
         $idNino = (int)$_GET['idNino'];
         $nino = Nino::getById($idNino);
 
-        if (!$nino || $nino->id_padre !== $this->session->getUserId()) {
+        if (!$nino || $nino['id_padre'] !== $this->session->getUserId()) {
             header("Location: index.php?ctl=error");
             exit;
         }
@@ -40,7 +44,6 @@ class PadreController
         require __DIR__ . '/../templates/verCartaHijo.php';
     }
 
-    // 🔴 Validar o poner pendiente
     public function validarCarta(): void
     {
         $idCarta = (int)$_GET['idCarta'];
@@ -51,7 +54,6 @@ class PadreController
         exit;
     }
 
-    // 🔴 Quitar juguete
     public function quitarJuguete(): void
     {
         $idCarta = (int)$_GET['idCarta'];
@@ -64,6 +66,7 @@ class PadreController
 
     public function crearNino(): void
     {
+        $session = $this->session; // ✅ CLAVE
         $errores = [];
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -77,7 +80,14 @@ class PadreController
             cNum($edad, 'edad', $errores, true, 18);
 
             if (empty($errores)) {
-                Nino::crearNino($user, $password, $nombre, (int)$edad, $this->session->getUserId());
+                Nino::crearNino(
+                    $user,
+                    $password,
+                    $nombre,
+                    (int)$edad,
+                    $this->session->getUserId()
+                );
+
                 header("Location: index.php?ctl=panelPadre");
                 exit;
             }

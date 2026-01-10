@@ -21,12 +21,6 @@ require_once __DIR__ . '/../app/modelo/Juguete.php';
 require_once __DIR__ . '/../app/modelo/Carta.php';
 
 /*
-Inicio de sesión.
-Si no hay usuario logueado, se considera visitante
-*/
-session_start();
-
-/*
 ENRUTAMIENTO
 El parámetro "ctl" determina la ruta.
 Cada ruta indica el controlador y la acción asociada.
