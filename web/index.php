@@ -36,12 +36,12 @@ $map = array(
     'logout'   => array('controller' => 'AuthController', 'action' => 'logout'),
     'registro' => array('controller' => 'AuthController', 'action' => 'registro'),
 
-    // Padre / Madre
-    'panelPadre'      => array('controller' => 'PadreController', 'action' => 'panel'),
-    'verCartaHijo' => ['controller' => 'PadreController', 'action' => 'verCartaHijo'],
-    'validarCarta' => ['controller' => 'PadreController', 'action' => 'validarCarta'],
-    'quitarJuguete' => ['controller' => 'PadreController', 'action' => 'quitarJuguete'],
-
+// Padre / Madre
+    'panelPadre'      => ['controller' => 'PadreController', 'action' => 'panel'],
+    'verCartaHijo'    => ['controller' => 'PadreController', 'action' => 'verCartaHijo'],
+    'validarCarta'    => ['controller' => 'PadreController', 'action' => 'validarCarta'],
+    'quitarJuguete'   => ['controller' => 'PadreController', 'action' => 'quitarJuguete'],
+    'crearNino'       => ['controller' => 'PadreController', 'action' => 'crearNino'],
 
     // Niño
     'panelNino'   => array('controller' => 'NinoController', 'action' => 'panel'),
