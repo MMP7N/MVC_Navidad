@@ -58,20 +58,35 @@ public function panel(): void
 public function verCartas(): void
 {
     $db = Database::getConexion();
+
+    // Traemos las cartas con el nombre del niño y del padre
     $stmt = $db->query("
-        SELECT n.nombre AS nino, c.estado, u.nombre AS padre
+        SELECT c.id AS id_carta, n.id AS id_nino, n.nombre AS nino, u.nombre AS padre, c.estado
         FROM cartas c
         JOIN ninos n ON c.id_nino = n.id
         JOIN usuarios u ON n.id_padre = u.id
         ORDER BY c.estado
     ");
-    $cartas = $stmt->fetchAll();
+    $cartas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Ahora para cada carta, añadimos los juguetes
+    foreach ($cartas as &$carta) {
+        $stmt2 = $db->prepare("
+            SELECT j.nombre 
+            FROM carta_juguetes cj
+            JOIN juguetes j ON cj.id_juguete = j.id
+            WHERE cj.id_carta = ?
+        ");
+        $stmt2->execute([$carta['id_carta']]);
+        $carta['juguetes'] = $stmt2->fetchAll(PDO::FETCH_COLUMN); // Array de nombres
+    }
+    unset($carta); // Buen hábito para no dejar la referencia colgando
 
     $titulo = "Cartas de los niños";
-
     $session = $this->session;
 
     require __DIR__ . '/../templates/verCartas.php';
 }
+
 
 }

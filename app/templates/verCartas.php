@@ -7,6 +7,7 @@
         <th>Niño</th>
         <th>Padre/Madre</th>
         <th>Estado</th>
+        <th>Juguetes</th>
     </tr>
 
     <?php foreach ($cartas as $c): ?>
@@ -14,6 +15,17 @@
             <td><?= htmlspecialchars($c['nino']) ?></td>
             <td><?= htmlspecialchars($c['padre']) ?></td>
             <td><?= strtoupper($c['estado']) ?></td>
+            <td>
+                <ul>
+                    <?php if (!empty($c['juguetes'])): ?>
+                        <?php foreach ($c['juguetes'] as $juguete): ?>
+                            <li><?= htmlspecialchars($juguete) ?></li>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <li>Sin juguetes</li>
+                    <?php endif; ?>
+                </ul>
+            </td>
         </tr>
     <?php endforeach; ?>
 </table>
