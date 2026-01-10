@@ -16,50 +16,62 @@ class PapaNoelController
     }
 
     // Panel principal
-    public function panel(): void
-    {
-        $titulo = "Panel Papá Noel";
-        require __DIR__ . '/../templates/panelPapaNoel.php';
-    }
+public function panel(): void
+{
+    $titulo = "Panel Papá Noel";
+
+    $session = $this->session;
+
+    require __DIR__ . '/../templates/panelPapaNoel.php';
+}
+
 
     // Insertar juguete
-    public function insertarJuguete(): void
-    {
-        $errores = [];
+   public function insertarJuguete(): void
+{
+    $errores = [];
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $nombre = recoge('nombre');
-            $descripcion = recoge('descripcion');
-            $precio = recoge('precio');
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $nombre = recoge('nombre');
+        $descripcion = recoge('descripcion');
+        $precio = str_replace(',', '.', recoge('precio'));
 
-            cTexto($nombre, 'nombre', $errores, 50, 2);
-            cNum($precio, 'precio', $errores, true, 999);
-
-            if (empty($errores)) {
-                Juguete::insertar($nombre, $descripcion, (float)$precio);
-                header("Location: index.php?ctl=panelPapaNoel");
-                exit;
-            }
+        cTexto($nombre, 'nombre', $errores, 50, 2);
+        if (!is_numeric($precio) || (float)$precio < 0) {
+            $errores['precio'] = "El precio debe ser un número válido mayor o igual a 0";
         }
 
-        $titulo = "Insertar Juguete";
-        require __DIR__ . '/../templates/insertarJuguete.php';
+        if (empty($errores)) {
+            Juguete::insertar($nombre, $descripcion, (float)$precio);
+            header("Location: index.php?ctl=panelPapaNoel");
+            exit;
+        }
     }
 
-    // Ver todas las cartas
-    public function verCartas(): void
-    {
-        $db = Database::getConexion();
-        $stmt = $db->query("
-            SELECT n.nombre AS nino, c.estado, u.nombre AS padre
-            FROM cartas c
-            JOIN ninos n ON c.id_nino = n.id
-            JOIN usuarios u ON n.id_padre = u.id
-            ORDER BY c.estado
-        ");
-        $cartas = $stmt->fetchAll();
+    $titulo = "Insertar Juguete";
 
-        $titulo = "Cartas de los niños";
-        require __DIR__ . '/../templates/verCartas.php';
-    }
+    $session = $this->session;
+
+    require __DIR__ . '/../templates/insertarJuguete.php';
+}
+
+public function verCartas(): void
+{
+    $db = Database::getConexion();
+    $stmt = $db->query("
+        SELECT n.nombre AS nino, c.estado, u.nombre AS padre
+        FROM cartas c
+        JOIN ninos n ON c.id_nino = n.id
+        JOIN usuarios u ON n.id_padre = u.id
+        ORDER BY c.estado
+    ");
+    $cartas = $stmt->fetchAll();
+
+    $titulo = "Cartas de los niños";
+
+    $session = $this->session;
+
+    require __DIR__ . '/../templates/verCartas.php';
+}
+
 }

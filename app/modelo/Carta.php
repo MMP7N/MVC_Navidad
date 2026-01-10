@@ -60,4 +60,12 @@ class Carta
         ");
         $stmt->execute([$idCarta, $idJuguete]);
     }
+// Quita todos los juguetes de una carta
+public static function quitarTodosJuguetes(int $idCarta): void
+{
+    $db = Database::getConexion();
+    $stmt = $db->prepare("DELETE FROM carta_juguetes WHERE id_carta = ?");
+    $stmt->execute([$idCarta]);
+}
+
 }

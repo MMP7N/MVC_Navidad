@@ -11,8 +11,9 @@
         <?php foreach ($hijos as $hijo): ?>
             <li>
                 <?= htmlspecialchars($hijo->nombre) ?> 
-                (<?= htmlspecialchars($hijo->edad) ?> años) -
-                <a href="index.php?ctl=verCartaHijo&idNino=<?= $hijo->id ?>">Ver carta</a>
+                (<?= htmlspecialchars($hijo->edad) ?> años) - 
+                <a href="index.php?ctl=verCartaHijo&idNino=<?= $hijo->id ?>">Ver carta</a> |
+                <a href="index.php?ctl=crearCartaHijo&idNino=<?= $hijo->id ?>">Crear carta</a>
             </li>
         <?php endforeach; ?>
     </ul>

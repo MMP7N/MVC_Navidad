@@ -16,58 +16,20 @@ class PadreController
         }
     }
 
+    // Panel del padre con lista de hijos
     public function panel(): void
     {
-        $session = $this->session; // ✅ CLAVE
-        $hijos = Nino::getHijosByPadre($this->session->getUserId());
+        $session = $this->session;
+        $hijos = Nino::getHijosByPadre($this->session->getUserId()); // array de objetos Nino
         $titulo = "Panel Padre";
 
         require __DIR__ . '/../templates/panelPadre.php';
     }
 
-    public function verCartaHijo(): void
-{
-    $session = $this->session; 
-
-    $idNino = (int)$_GET['idNino'];
-    $nino = Nino::getById($idNino);
-
-    if (!$nino || $nino->id_padre !== $this->session->getUserId()) {
-        header("Location: index.php?ctl=error");
-        exit;
-    }
-
-    $carta = Carta::getCartaByNino($idNino);
-    $juguetes = $carta ? Carta::getJuguetesCarta($carta->id) : [];
-
-    $titulo = "Carta del hijo";
-    require __DIR__ . '/../templates/verCartaHijo.php';
-}
-
-
-    public function validarCarta(): void
-    {
-        $idCarta = (int)$_GET['idCarta'];
-        $estado = $_GET['estado'];
-
-        Carta::setEstado($idCarta, $estado);
-        header("Location: index.php?ctl=panelPadre");
-        exit;
-    }
-
-    public function quitarJuguete(): void
-    {
-        $idCarta = (int)$_GET['idCarta'];
-        $idJuguete = (int)$_GET['idJuguete'];
-
-        Carta::quitarJuguete($idCarta, $idJuguete);
-        header("Location: " . $_SERVER['HTTP_REFERER']);
-        exit;
-    }
-
+    // Crear un nuevo hijo
     public function crearNino(): void
     {
-        $session = $this->session; 
+        $session = $this->session;
         $errores = [];
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -86,7 +48,7 @@ class PadreController
                     $password,
                     $nombre,
                     (int)$edad,
-                    $this->session->getUserId()
+                    $session->getUserId()
                 );
 
                 header("Location: index.php?ctl=panelPadre");
@@ -97,4 +59,85 @@ class PadreController
         $titulo = "Crear Niño";
         require __DIR__ . '/../templates/crearNino.php';
     }
+
+    // Ver la carta de un hijo
+    public function verCartaHijo(): void
+    {
+        $session = $this->session;
+        $idNino = (int)$_GET['idNino'];
+        $nino = Nino::getById($idNino);
+
+        if (!$nino || $nino->id_padre !== $this->session->getUserId()) {
+            header("Location: index.php?ctl=error");
+            exit;
+        }
+
+        $carta = Carta::getCartaByNino($idNino);
+        $juguetes = $carta ? Carta::getJuguetesCarta($carta['id']) : [];
+
+        $titulo = "Carta de " . $nino->nombre;
+        require __DIR__ . '/../templates/verCartaHijo.php';
+    }
+
+    public function crearCartaHijo(): void
+{
+    $idNino = (int)$_GET['idNino'];
+    $nino = Nino::getById($idNino);
+
+    if (!$nino || $nino->id_padre !== $this->session->getUserId()) {
+        header("Location: index.php?ctl=error");
+        exit;
+    }
+
+    $carta = Carta::getCartaByNino($idNino);
+    if (!$carta) {
+        $idCarta = Carta::crearCarta($idNino);
+        $carta = Carta::getCartaById($idCarta);
+    } else {
+        $idCarta = $carta['id'];
+    }
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $juguetesSeleccionados = recogeArray('juguetes');
+        Carta::quitarTodosJuguetes($idCarta);
+        foreach ($juguetesSeleccionados as $idJuguete) {
+            Carta::addJuguete($idCarta, (int)$idJuguete);
+        }
+        header("Location: index.php?ctl=verCartaHijo&idNino=$idNino");
+        exit;
+    }
+
+    $juguetes = Juguete::getAll();
+    $juguetesEnCarta = Carta::getJuguetesCarta($idCarta);
+
+    $titulo = "Crear carta de $nino->nombre";
+
+    // 🔑 Esto es lo que faltaba
+    $session = $this->session;
+
+    require __DIR__ . '/../templates/crearCartaHijo.php';
 }
+
+    // Validar carta (marcar como validada o pendiente)
+    public function validarCarta(): void
+    {
+        $idCarta = (int)$_GET['idCarta'];
+        $estado = $_GET['estado'];
+
+        Carta::setEstado($idCarta, $estado);
+        header("Location: " . $_SERVER['HTTP_REFERER']);
+        exit;
+    }
+
+    // Quitar un juguete de la carta
+    public function quitarJuguete(): void
+    {
+        $idCarta = (int)$_GET['idCarta'];
+        $idJuguete = (int)$_GET['idJuguete'];
+
+        Carta::quitarJuguete($idCarta, $idJuguete);
+        header("Location: " . $_SERVER['HTTP_REFERER']);
+        exit;
+    }
+}
+?>

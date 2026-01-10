@@ -10,7 +10,7 @@ class AuthController
         $this->session = new SessionManager();
     }
 
-    // Registro de usuario (padre o Papa Noel)
+    // Registro de usuario (solo Padre o Papá Noel)
     public function registro(): void
     {
         $errores = [];
@@ -26,7 +26,11 @@ class AuthController
             cTexto($user, 'user', $errores, 30, 3);
             cTexto($nombre, 'nombre', $errores, 50, 3);
             cTexto($rol, 'rol', $errores, 10, 3);
-            
+
+            if (!in_array($rol, ['padre', 'papanoel'])) {
+                $errores['rol'] = "Rol no válido";
+            }
+
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $errores['email'] = "Email no válido";
             }
@@ -54,7 +58,7 @@ class AuthController
         require __DIR__ . '/../templates/registro.php';
     }
 
-    // Login de usuario
+    // Login de usuario (Padre, Niño, Papá Noel)
     public function login(): void
     {
         $errores = [];
@@ -66,19 +70,24 @@ class AuthController
             $db = Database::getConexion();
             $stmt = $db->prepare("SELECT * FROM usuarios WHERE user = ?");
             $stmt->execute([$user]);
-            $usuario = $stmt->fetch();
+            $usuario = $stmt->fetch(PDO::FETCH_OBJ); 
 
-            if ($usuario && comprobarhash($password, $usuario['password'])) {
+            if ($usuario && comprobarhash($password, $usuario->password)) {
                 $nivel = 0;
-                switch ($usuario['rol']) {
+                switch ($usuario->rol) {
                     case 'padre': $nivel = 1; break;
+                    case 'nino': $nivel = 2; break;
                     case 'papanoel': $nivel = 3; break;
                 }
-                $this->session->login($usuario['id'], $usuario['nombre'], $nivel);
+
+                $this->session->login($usuario->id, $usuario->nombre, $nivel);
 
                 // Redirige según rol
-                if ($nivel === 1) header("Location: index.php?ctl=panelPadre");
-                if ($nivel === 3) header("Location: index.php?ctl=panelPapaNoel");
+                switch ($nivel) {
+                    case 1: header("Location: index.php?ctl=panelPadre"); break;
+                    case 2: header("Location: index.php?ctl=panelNino"); break;
+                    case 3: header("Location: index.php?ctl=panelPapaNoel"); break;
+                }
                 exit;
             } else {
                 $errores['general'] = "Usuario o contraseña incorrectos";
@@ -95,3 +104,4 @@ class AuthController
         $this->session->logout();
     }
 }
+?>
