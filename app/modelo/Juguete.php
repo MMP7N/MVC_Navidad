@@ -1,8 +1,5 @@
 <?php
 /**
- * ================================================================
- *  Clase Juguete
- *  ---------------------------------------------------------------
  *  Modelo para gestionar los juguetes de la aplicación.
  *  Funcionalidades:
  *    - Listar todos los juguetes

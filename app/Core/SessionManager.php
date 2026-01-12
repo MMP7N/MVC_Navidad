@@ -1,9 +1,6 @@
 <?php
 /**
- * ================================================================
- *  SessionManager
- *  ---------------------------------------------------------------
- *  Gestión segura de sesiones para tu aplicación de "Cartas a Papá Noel"
+ *  Gestión segura de sesiones en la aplicación
  *  Funcionalidades:
  *    - Hardening de cookies (HttpOnly, Secure, SameSite)
  *    - Fingerprint (IP + User-Agent) para evitar secuestro de sesión

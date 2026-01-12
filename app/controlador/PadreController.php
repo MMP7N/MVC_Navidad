@@ -1,6 +1,4 @@
 <?php
-// app/controlador/PadreController.php
-
 /**
  * Controlador para usuarios con rol Padre
  * Gestiona la visualización de hijos, creación de niños y cartas
@@ -28,7 +26,7 @@ class PadreController
     public function panel(): void
     {
         $session = $this->session;
-        $hijos = Nino::getHijosByPadre($this->session->getUserId()); // Array de objetos Nino
+        $hijos = Nino::getHijosByPadre($this->session->getUserId());
         $titulo = "Panel Padre";
 
         require __DIR__ . '/../templates/panelPadre.php';
@@ -49,7 +47,6 @@ class PadreController
             $nombre = recoge('nombre');
             $edad = recoge('edad');
 
-            // Validaciones
             cTexto($user, 'user', $errores, 30, 3);
             cTexto($nombre, 'nombre', $errores, 50, 3);
             cNum($edad, 'edad', $errores, true, 18);
@@ -60,7 +57,7 @@ class PadreController
                     $password,
                     $nombre,
                     (int)$edad,
-                    $session->getUserId() // ID del padre logueado
+                    $session->getUserId()
                 );
 
                 header("Location: index.php?ctl=panelPadre");
@@ -123,7 +120,6 @@ class PadreController
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $juguetesSeleccionados = recogeArray('juguetes');
 
-            // Primero quitar todos los juguetes existentes
             Carta::quitarTodosJuguetes($idCarta);
 
             // Añadir solo los seleccionados
@@ -140,7 +136,7 @@ class PadreController
         $juguetesEnCarta = Carta::getJuguetesCarta($idCarta);
 
         $titulo = "Crear carta de $nino->nombre";
-        $session = $this->session; // necesario para header.php
+        $session = $this->session;
 
         require __DIR__ . '/../templates/crearCartaHijo.php';
     }

@@ -1,6 +1,4 @@
 <?php
-// app/controlador/Controller.php
-
 /**
  * Controlador principal genérico
  * Gestiona páginas públicas o generales como inicio y error
@@ -22,7 +20,6 @@ class Controller
      */
     public function inicio(): void
     {
-        // Redirige automáticamente según rol
         if ($this->session->isPadre()) {
             header("Location: index.php?ctl=panelPadre");
             exit;
@@ -40,7 +37,7 @@ class Controller
 
         // Para visitantes sin sesión
         $titulo = "Bienvenido a Cartas a Papá Noel";
-        $session = $this->session;  // Necesario para el header.php
+        $session = $this->session;  
         require __DIR__ . '/../templates/home.php';
     }
 
@@ -51,7 +48,7 @@ class Controller
     public function error(): void
     {
         $titulo = "Error";
-        $session = $this->session;  // Necesario para el header.php
+        $session = $this->session;
         require __DIR__ . '/../templates/error.php';
     }
 }

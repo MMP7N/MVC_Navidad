@@ -1,8 +1,5 @@
 <?php
 /**
- * ================================================================
- *  Clase Nino
- *  ---------------------------------------------------------------
  *  Modelo para gestionar los niños dentro de la aplicación.
  *  Funcionalidades:
  *    - Crear un nuevo niño

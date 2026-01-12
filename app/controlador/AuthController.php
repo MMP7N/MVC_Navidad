@@ -1,6 +1,4 @@
 <?php
-// app/controlador/AuthController.php
-
 /**
  * Controlador de autenticación
  * Gestiona el registro, login y logout de los usuarios
@@ -29,7 +27,7 @@ class AuthController
             $email = recoge('email');
             $password = recoge('password');
             $nombre = recoge('nombre');
-            $rol = recoge('rol'); // 'padre' o 'papanoel'
+            $rol = recoge('rol'); 
 
             // Validaciones de campos
             cTexto($user, 'user', $errores, 30, 3);
@@ -50,7 +48,7 @@ class AuthController
 
             // Si no hay errores, insertamos el usuario en la base de datos
             if (empty($errores)) {
-                $hash = encriptar($password); // Función para encriptar la contraseña
+                $hash = encriptar($password);
 
                 $db = Database::getConexion();
                 $stmt = $db->prepare(
@@ -59,7 +57,6 @@ class AuthController
 
                 try {
                     $stmt->execute([$user, $email, $hash, $nombre, $rol]);
-                    // Redirige al login después de registrar
                     header("Location: index.php?ctl=login");
                     exit;
                 } catch (PDOException $e) {
@@ -68,7 +65,6 @@ class AuthController
             }
         }
 
-        // Título de la página y carga de la plantilla
         $titulo = "Registro de usuario";
         require __DIR__ . '/../templates/registro.php';
     }
@@ -127,7 +123,6 @@ class AuthController
     public function logout(): void
     {
         $this->session->logout();
-        // Después de cerrar sesión se puede redirigir a la página de inicio
         header("Location: index.php?ctl=inicio");
         exit;
     }

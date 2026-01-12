@@ -9,9 +9,7 @@
  *    - Ejecutar la acción correspondiente según el parámetro "ctl"
  */
 
-// ---------------------------------------------------------------
 //  Carga de librerías y archivos esenciales
-// ---------------------------------------------------------------
 require_once __DIR__ . '/../app/libs/Config.php';      // Configuración global
 require_once __DIR__ . '/../app/libs/bGeneral.php';    // Funciones generales
 require_once __DIR__ . '/../app/libs/bSeguridad.php';  // Funciones de seguridad
@@ -30,9 +28,7 @@ require_once __DIR__ . '/../app/modelo/Nino.php';
 require_once __DIR__ . '/../app/modelo/Juguete.php';
 require_once __DIR__ . '/../app/modelo/Carta.php';
 
-// ---------------------------------------------------------------
 //  Definición de rutas
-// ---------------------------------------------------------------
 // El parámetro "ctl" define la acción a ejecutar
 $map = [
     // Rutas generales
@@ -58,9 +54,7 @@ $map = [
     'verCartas'        => ['controller' => 'PapaNoelController', 'action' => 'verCartas'],
 ];
 
-// ---------------------------------------------------------------
 //  Determinar la ruta solicitada
-// ---------------------------------------------------------------
 $ruta = $_GET['ctl'] ?? 'inicio';
 
 if (!isset($map[$ruta])) {
@@ -72,9 +66,7 @@ if (!isset($map[$ruta])) {
 
 $controlador = $map[$ruta];
 
-// ---------------------------------------------------------------
 //  Ejecutar el controlador y acción correspondiente
-// ---------------------------------------------------------------
 if (class_exists($controlador['controller']) && method_exists($controlador['controller'], $controlador['action'])) {
     call_user_func([new $controlador['controller'], $controlador['action']]);
 } else {

@@ -1,8 +1,5 @@
 <?php
 /**
- * ================================================================
- *  Clase Usuario
- *  ---------------------------------------------------------------
  *  Modelo para gestionar usuarios en la aplicación.
  *  Funcionalidades:
  *    - Obtener un usuario por ID

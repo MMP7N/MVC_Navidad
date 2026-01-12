@@ -1,6 +1,6 @@
 <?php require __DIR__ . '/header.php'; ?>
 
-<h2>Crear carta de <?= htmlspecialchars($nino->nombre) ?></h2>
+<h2>Crea tu carta <?= htmlspecialchars($nino->nombre) ?></h2>
 
 <form method="POST">
     <?php foreach ($juguetes as $j): ?>

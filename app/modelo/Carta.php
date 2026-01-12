@@ -1,8 +1,5 @@
 <?php
 /**
- * ================================================================
- *  Clase Carta
- *  ---------------------------------------------------------------
  *  Modelo para manejar las cartas de los niños en la aplicación.
  *  Funcionalidades:
  *    - Crear y obtener cartas de un niño
@@ -99,7 +96,7 @@ class Carta
     }
 
     /**
-     * Quita todos los juguetes de una carta (útil para actualizar selección)
+     * Quita todos los juguetes de una carta
      * @param int $idCarta
      */
     public static function quitarTodosJuguetes(int $idCarta): void
@@ -108,5 +105,29 @@ class Carta
         $stmt = $db->prepare("DELETE FROM carta_juguetes WHERE id_carta = ?");
         $stmt->execute([$idCarta]);
     }
+    /**
+ * Obtiene todas las cartas con datos del niño y del padre
+ * @return array
+ */
+public static function getTodasConNinoYPadre(): array
+{
+    $db = Database::getConexion();
+
+    $stmt = $db->query("
+        SELECT 
+            c.id AS id_carta,
+            n.id AS id_nino,
+            n.nombre AS nino,
+            u.nombre AS padre,
+            c.estado
+        FROM cartas c
+        JOIN ninos n ON c.id_nino = n.id
+        JOIN usuarios u ON n.id_padre = u.id
+        ORDER BY c.estado
+    ");
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
 }
 ?>
