@@ -1,6 +1,4 @@
-/* =========================
-   RESET BÁSICO
-========================= */
+/*RESET BÁSICO */
 * {
     margin: 0;
     padding: 0;
@@ -8,9 +6,7 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* =========================
-   ESTRUCTURA GENERAL Y FOOTER STICKY
-========================= */
+/*ESTRUCTURA GENERAL Y FOOTER STICKY*/
 html, body {
     height: 100%;
 }
@@ -19,24 +15,23 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    background: linear-gradient(to bottom, #eaf6f1, #f4f6f8); /* fondo suave */
+    background: linear-gradient(to bottom, #eaf6f1, #f4f6f8);
     color: #333;
     line-height: 1.6;
 }
 
 .page-wrapper {
-    flex: 1; /* ocupa todo el espacio entre header y footer */
+    flex: 1; 
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 20px 0;
 }
 
-/* =========================
-   HEADER
-========================= */
+
+/*HEADER*/
 header {
-    background-color: #c0392b; /* rojo navideño */
+    background-color: #c0392b; 
     color: white;
     padding: 20px;
     text-align: center;
@@ -73,9 +68,8 @@ nav a:hover {
     text-decoration: none;
 }
 
-/* =========================
-   MAIN
-========================= */
+
+/*MAIN*/
 main {
     width: 95%;
     max-width: 1200px;
@@ -84,27 +78,25 @@ main {
     border-radius: 12px;
     box-shadow: 0 10px 20px rgba(0,0,0,0.15);
     margin: 30px auto;
-    min-height: auto; /* se adapta al contenido */
+    min-height: auto; 
     position: relative;
     z-index: 1;
 }
 
-/* =========================
-   FOOTER
-========================= */
+
+/*FOOTER*/
 footer {
     width: 100%;
     text-align: center;
     padding: 15px;
     color: #fff;
-    background-color: #27ae60; /* verde navideño */
+    background-color: #27ae60; 
     box-shadow: 0 -3px 10px rgba(0,0,0,0.1);
-    margin-top: auto; /* sticky footer */
+    margin-top: auto;
 }
 
-/* =========================
-   TÍTULOS
-========================= */
+
+/*TÍTULOS*/
 h2 {
     margin-bottom: 20px;
     color: #c0392b;
@@ -116,9 +108,8 @@ h3 {
     color: #16a085;
 }
 
-/* =========================
-   FORMULARIOS
-========================= */
+
+/*FORMULARIOS*/
 form label {
     display: block;
     margin-bottom: 12px;
@@ -157,9 +148,8 @@ button:hover {
     background-color: #e74c3c;
 }
 
-/* =========================
-   LISTAS Y ENLACES
-========================= */
+
+/*LISTAS Y ENLACES*/
 ul {
     list-style: none;
     margin-top: 15px;
@@ -178,9 +168,8 @@ a:hover {
     color: #e74c3c;
 }
 
-/* =========================
-   TABLAS
-========================= */
+
+/*TABLAS*/
 table {
     width: 100%;
     border-collapse: collapse;
@@ -203,9 +192,8 @@ tr:nth-child(even) {
     background-color: #f7f7f7;
 }
 
-/* =========================
-   MENSAJES
-========================= */
+
+/*MENSAJES*/
 .error {
     background-color: #f8d7da;
     color: #721c24;
@@ -222,9 +210,8 @@ tr:nth-child(even) {
     margin-bottom: 15px;
 }
 
-/* =========================
-   ACCIONES (VALIDAR / BORRAR)
-========================= */
+
+/*ACCIONES (VALIDAR / BORRAR)*/
 .acciones a {
     margin-right: 10px;
     font-size: 0.9em;
