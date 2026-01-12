@@ -3,7 +3,7 @@
 <h2>Editar juguete</h2>
 
 <?php if (!empty($errores)): ?>
-    <div class="errores">
+    <div class="error">
         <ul>
             <?php foreach ($errores as $campo => $mensaje): ?>
                 <li><?= htmlspecialchars($mensaje) ?></li>
