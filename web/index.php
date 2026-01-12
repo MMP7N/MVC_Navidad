@@ -52,6 +52,8 @@ $map = [
     'panelPapaNoel'    => ['controller' => 'PapaNoelController', 'action' => 'panel'],
     'insertarJuguete'  => ['controller' => 'PapaNoelController', 'action' => 'insertarJuguete'],
     'verCartas'        => ['controller' => 'PapaNoelController', 'action' => 'verCartas'],
+    'verJuguetes'      => ['controller' => 'PapaNoelController', 'action' => 'verJuguetes'],
+    'editarJuguete'    => ['controller' => 'PapaNoelController', 'action' => 'editarJuguete'],
 ];
 
 //  Determinar la ruta solicitada

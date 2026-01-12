@@ -5,6 +5,7 @@
 <ul>
     <li><a href="index.php?ctl=insertarJuguete">Insertar Juguete</a></li>
     <li><a href="index.php?ctl=verCartas">Ver Cartas</a></li>
+    <li><a href="index.php?ctl=verJuguetes">Ver juguetes</a></li>
 </ul>
 
 <?php require __DIR__ . '/footer.php'; ?>

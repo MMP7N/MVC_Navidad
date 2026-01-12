@@ -27,6 +27,8 @@
                 <?php elseif ($session->isPapaNoel()): ?>
                     <li><a href="index.php?ctl=panelPapaNoel">Panel Papá Noel</a></li>
                     <li><a href="index.php?ctl=insertarJuguete">Insertar Juguete</a></li>
+                    <li><a href="index.php?ctl=verCartas">Ver Cartas</a></li>
+                    <li><a href="index.php?ctl=verJuguetes">Ver juguetes</a></li>
                 <?php endif; ?>
 
                 <li><a href="index.php?ctl=logout">Cerrar sesión</a></li>

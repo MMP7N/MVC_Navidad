@@ -34,5 +34,23 @@ class Juguete
         ");
         $stmt->execute([$nombre, $descripcion, $precio]);
     }
+    /**
+     * Permite editar un juguete existente
+     * @param int $id ID del juguete
+     * @param string $nombre Nuevo nombre del juguete
+     * @param string $descripcion Nueva descripción del juguete
+     * @param float $precio Nuevo precio del juguete
+     * @return void
+     */
+    public static function editar(int $id, string $nombre, string $descripcion, float $precio): void
+    {
+        $db = Database::getConexion();
+        $stmt = $db->prepare("
+            UPDATE juguetes
+            SET nombre = ?, descripcion = ?, precio = ?
+            WHERE id = ?
+        ");
+        $stmt->execute([$nombre, $descripcion, $precio, $id]);
+    }
 }
 ?>

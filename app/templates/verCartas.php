@@ -19,7 +19,7 @@
                 <ul>
                     <?php if (!empty($c['juguetes'])): ?>
                         <?php foreach ($c['juguetes'] as $juguete): ?>
-                            <li><?= htmlspecialchars($juguete) ?></li>
+                            <li><?= htmlspecialchars($juguete['nombre']) ?></li>
                         <?php endforeach; ?>
                     <?php else: ?>
                         <li>Sin juguetes</li>

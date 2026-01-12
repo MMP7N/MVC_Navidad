@@ -111,7 +111,7 @@ class PadreController
         $carta = Carta::getCartaByNino($idNino);
         if (!$carta) {
             $idCarta = Carta::crearCarta($idNino);
-            $carta = Carta::getCartaById($idCarta);
+            $carta = Carta::getCartaByNino($idCarta);
         } else {
             $idCarta = $carta['id'];
         }

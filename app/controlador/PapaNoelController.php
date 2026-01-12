@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Controlador para usuarios con rol Papá Noel
  * Permite ver el panel principal, insertar juguetes y revisar cartas de los niños
@@ -23,7 +24,7 @@ class PapaNoelController
     public function panel(): void
     {
         $titulo = "Panel Papá Noel";
-        $session = $this->session; 
+        $session = $this->session;
         require __DIR__ . '/../templates/panelPapaNoel.php';
     }
 
@@ -62,20 +63,70 @@ class PapaNoelController
      * Ver todas las cartas de los niños
      * Incluye los nombres de los juguetes solicitados en cada carta
      */
-public function verCartas(): void
-{
-    $cartas = Carta::getTodasConNinoYPadre();
+    public function verCartas(): void
+    {
+        $cartas = Carta::getTodasConNinoYPadre();
 
-    foreach ($cartas as &$carta) {
-        $carta['juguetes'] = Carta::getJuguetesCarta($carta['id_carta']);
+        foreach ($cartas as &$carta) {
+            $carta['juguetes'] = Carta::getJuguetesCarta($carta['id_carta']);
+        }
+        unset($carta);
+
+        $titulo = "Cartas de los niños";
+        $session = $this->session;
+
+        require __DIR__ . '/../templates/verCartas.php';
     }
-    unset($carta);
+    public function verJuguetes(): void
+    {
+        $juguetes = Juguete::getAll();
 
-    $titulo = "Cartas de los niños";
-    $session = $this->session;
+        $titulo = "Lista de Juguetes";
+        $session = $this->session;
 
-    require __DIR__ . '/../templates/verCartas.php';
+        require __DIR__ . '/../templates/verJuguetes.php';
+    }
+    public function editarJuguete(): void
+    {
+        $errores = [];
+        $id = (int)$_GET['id'];
+
+        $juguete = null;
+        $juguetes = Juguete::getAll();
+        foreach ($juguetes as $j) {
+            if ($j['id'] === $id) {
+                $juguete = $j;
+                break;
+            }
+        }
+
+        if (!$juguete) {
+            header("Location: index.php?ctl=error");
+            exit;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $nombre = recoge('nombre');
+            $descripcion = recoge('descripcion');
+            $precio = str_replace(',', '.', recoge('precio'));
+
+            cTexto($nombre, 'nombre', $errores, 50, 2);
+
+            if (!is_numeric($precio) || (float)$precio < 0) {
+                $errores['precio'] = "El precio debe ser un número válido mayor o igual a 0";
+            }
+
+            if (empty($errores)) {
+                Juguete::editar($id, $nombre, $descripcion, (float)$precio);
+                header("Location: index.php?ctl=verJuguetes");
+                exit;
+            }
+        }
+
+        $titulo = "Editar Juguete";
+        $session = $this->session;
+
+        // Asegúrate de pasar $juguete y $errores a la vista
+        require __DIR__ . '/../templates/editarJuguete.php';
+    }
 }
-
-}
-?>
