@@ -25,11 +25,6 @@ class Controller
             exit;
         }
 
-        if ($this->session->isNino()) {
-            header("Location: index.php?ctl=panelNino");
-            exit;
-        }
-
         if ($this->session->isPapaNoel()) {
             header("Location: index.php?ctl=panelPapaNoel");
             exit;

@@ -1,15 +1,14 @@
 <?php
-/**
- * Controlador para usuarios con rol Padre
- * Gestiona la visualización de hijos, creación de niños y cartas
- */
+
 class PadreController
 {
     private SessionManager $session;
+    private PDO $db;
+    private Nino $ninoModel;
 
     public function __construct()
     {
-        // Inicializa la sesión y verifica que el usuario sea Padre
+        // Seguridad
         $this->session = new SessionManager();
         $this->session->checkSecurity();
 
@@ -17,16 +16,21 @@ class PadreController
             header("Location: index.php?ctl=error");
             exit;
         }
+
+        // Conexión a BD
+        $this->db = Database::getConexion();
+
+        // Modelo Niño
+        $this->ninoModel = new Nino($this->db);
     }
 
     /**
      * Panel principal del padre
-     * Muestra los hijos registrados
      */
     public function panel(): void
     {
         $session = $this->session;
-        $hijos = Nino::getHijosByPadre($this->session->getUserId());
+        $hijos = $this->ninoModel->getHijosByPadre($this->session->getUserId());
         $titulo = "Panel Padre";
 
         require __DIR__ . '/../templates/panelPadre.php';
@@ -34,7 +38,6 @@ class PadreController
 
     /**
      * Crear un nuevo hijo
-     * Recoge datos del formulario, valida y crea un registro en la base de datos
      */
     public function crearNino(): void
     {
@@ -52,7 +55,7 @@ class PadreController
             cNum($edad, 'edad', $errores, true, 18);
 
             if (empty($errores)) {
-                Nino::crearNino(
+                $this->ninoModel->crearNino(
                     $user,
                     $password,
                     $nombre,
@@ -70,16 +73,15 @@ class PadreController
     }
 
     /**
-     * Ver la carta de un hijo
-     * Muestra los juguetes que ya ha pedido
+     * Ver carta de un hijo
      */
     public function verCartaHijo(): void
     {
         $session = $this->session;
         $idNino = (int)$_GET['idNino'];
-        $nino = Nino::getById($idNino);
 
-        // Seguridad: solo el padre puede ver la carta de su hijo
+        $nino = $this->ninoModel->getById($idNino);
+
         if (!$nino || $nino->id_padre !== $this->session->getUserId()) {
             header("Location: index.php?ctl=error");
             exit;
@@ -93,36 +95,31 @@ class PadreController
     }
 
     /**
-     * Crear o editar la carta de un hijo
-     * Permite marcar o desmarcar juguetes y guardarlos
+     * Crear o editar carta
      */
     public function crearCartaHijo(): void
     {
         $idNino = (int)$_GET['idNino'];
-        $nino = Nino::getById($idNino);
+        $nino = $this->ninoModel->getById($idNino);
 
-        // Seguridad: solo el padre del niño puede acceder
         if (!$nino || $nino->id_padre !== $this->session->getUserId()) {
             header("Location: index.php?ctl=error");
             exit;
         }
 
-        // Obtener carta existente o crear nueva
         $carta = Carta::getCartaByNino($idNino);
+
         if (!$carta) {
             $idCarta = Carta::crearCarta($idNino);
-            $carta = Carta::getCartaByNino($idCarta);
         } else {
             $idCarta = $carta['id'];
         }
 
-        // Procesar formulario: marcar/desmarcar juguetes
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $juguetesSeleccionados = recogeArray('juguetes');
 
             Carta::quitarTodosJuguetes($idCarta);
 
-            // Añadir solo los seleccionados
             foreach ($juguetesSeleccionados as $idJuguete) {
                 Carta::addJuguete($idCarta, (int)$idJuguete);
             }
@@ -131,7 +128,6 @@ class PadreController
             exit;
         }
 
-        // Obtener todos los juguetes y los que ya están en la carta
         $juguetes = Juguete::getAll();
         $juguetesEnCarta = Carta::getJuguetesCarta($idCarta);
 
@@ -141,9 +137,6 @@ class PadreController
         require __DIR__ . '/../templates/crearCartaHijo.php';
     }
 
-    /**
-     * Validar carta: marcar como validada o pendiente
-     */
     public function validarCarta(): void
     {
         $idCarta = (int)$_GET['idCarta'];
@@ -154,9 +147,6 @@ class PadreController
         exit;
     }
 
-    /**
-     * Quitar un juguete de la carta
-     */
     public function quitarJuguete(): void
     {
         $idCarta = (int)$_GET['idCarta'];
