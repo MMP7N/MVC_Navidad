@@ -7,15 +7,22 @@
 class PapaNoelController
 {
     private SessionManager $session;
+    private PDO $db;
+    private Juguete $jugueteModel;
+    private Carta $cartaModel;
 
     public function __construct()
     {
         $this->session = new SessionManager();
+        $this->session->checkSecurity();
 
         if (!$this->session->isPapaNoel()) {
             header("Location: index.php?ctl=error");
             exit;
         }
+        $this->db = Database::getConexion();
+        $this->jugueteModel = new Juguete($this->db);
+        $this->cartaModel = new Carta($this->db);
     }
 
     /**
@@ -48,7 +55,7 @@ class PapaNoelController
             }
 
             if (empty($errores)) {
-                Juguete::insertar($nombre, $descripcion, (float)$precio);
+                $this->jugueteModel->insertar($nombre, $descripcion, (float)$precio);
                 header("Location: index.php?ctl=panelPapaNoel");
                 exit;
             }
@@ -65,10 +72,10 @@ class PapaNoelController
      */
     public function verCartas(): void
     {
-        $cartas = Carta::getTodasConNinoYPadre();
+        $cartas = $this->cartaModel->getTodasConNinoYPadre();
 
         foreach ($cartas as &$carta) {
-            $carta['juguetes'] = Carta::getJuguetesCarta($carta['id_carta']);
+            $carta['juguetes'] = $this->cartaModel->getJuguetesCarta($carta['id_carta']);
         }
         unset($carta);
 
@@ -79,7 +86,7 @@ class PapaNoelController
     }
     public function verJuguetes(): void
     {
-        $juguetes = Juguete::getAll();
+        $juguetes = $this->jugueteModel->getAll();
 
         $titulo = "Lista de Juguetes";
         $session = $this->session;
@@ -92,7 +99,7 @@ class PapaNoelController
         $id = (int)$_GET['id'];
 
         $juguete = null;
-        $juguetes = Juguete::getAll();
+        $juguetes = $this->jugueteModel->getAll();
         foreach ($juguetes as $j) {
             if ($j['id'] === $id) {
                 $juguete = $j;
@@ -117,7 +124,7 @@ class PapaNoelController
             }
 
             if (empty($errores)) {
-                Juguete::editar($id, $nombre, $descripcion, (float)$precio);
+                $this->jugueteModel->editar($id, $nombre, $descripcion, (float)$precio);
                 header("Location: index.php?ctl=verJuguetes");
                 exit;
             }

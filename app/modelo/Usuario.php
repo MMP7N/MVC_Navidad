@@ -1,15 +1,15 @@
 <?php
 /**
- *  Modelo para gestionar usuarios en la aplicación.
- *  Funcionalidades:
- *    - Obtener un usuario por ID
- *    - Obtener todos los usuarios con rol "padre"
- * 
- *  Cada objeto Usuario representa un registro de la tabla "usuarios".
+ * Modelo para gestionar usuarios en la aplicación.
+ * Funcionalidades:
+ *   - Obtener un usuario por ID
+ *   - Obtener todos los usuarios con rol "padre"
  */
 
 class Usuario
 {
+    private PDO $db;
+
     public int $id;
     public string $user;
     public string $email;
@@ -19,64 +19,56 @@ class Usuario
     /**
      * Constructor para inicializar un objeto Usuario
      */
-    public function __construct(
-        int $id = 0,
-        string $user = "",
-        string $email = "",
-        string $nombre = "",
-        string $rol = ""
-    ) {
-        $this->id = $id;
-        $this->user = $user;
-        $this->email = $email;
-        $this->nombre = $nombre;
-        $this->rol = $rol;
+    public function __construct(PDO $db)
+    {
+        $this->db = $db;
     }
 
     /**
      * Obtener un usuario por su ID
-     * @param int $id ID del usuario
-     * @return Usuario|null Objeto Usuario si existe, null si no existe
+     * @param int $id
+     * @return Usuario|null
      */
-    public static function getById(int $id): ?Usuario
+    public function getById(int $id): ?Usuario
     {
-        $db = Database::getConexion();
-        $stmt = $db->prepare("SELECT * FROM usuarios WHERE id = ?");
+        $stmt = $this->db->prepare("SELECT * FROM usuarios WHERE id = ?");
         $stmt->execute([$id]);
-        $row = $stmt->fetch();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($row) {
-            return new Usuario(
-                $row['id'],
-                $row['user'],
-                $row['email'],
-                $row['nombre'],
-                $row['rol']
-            );
+        if (!$row) {
+            return null;
         }
 
-        return null;
+        $usuario = new Usuario($this->db);
+        $usuario->id = $row['id'];
+        $usuario->user = $row['user'];
+        $usuario->email = $row['email'];
+        $usuario->nombre = $row['nombre'];
+        $usuario->rol = $row['rol'];
+
+        return $usuario;
     }
 
     /**
      * Obtener todos los usuarios que sean padres
      * @return array Array de objetos Usuario
      */
-    public static function getPadres(): array
+    public function getPadres(): array
     {
-        $db = Database::getConexion();
-        $stmt = $db->query("SELECT * FROM usuarios WHERE rol = 'padre'");
-
+        $stmt = $this->db->query("SELECT * FROM usuarios WHERE rol = 'padre'");
         $padres = [];
-        while ($row = $stmt->fetch()) {
-            $padres[] = new Usuario(
-                $row['id'],
-                $row['user'],
-                $row['email'],
-                $row['nombre'],
-                $row['rol']
-            );
+
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $usuario = new Usuario($this->db);
+            $usuario->id = $row['id'];
+            $usuario->user = $row['user'];
+            $usuario->email = $row['email'];
+            $usuario->nombre = $row['nombre'];
+            $usuario->rol = $row['rol'];
+
+            $padres[] = $usuario;
         }
+
         return $padres;
     }
 }

@@ -7,11 +7,13 @@
 class AuthController
 {
     private SessionManager $session;
+    private PDO $db;
 
     public function __construct()
     {
         // Inicializamos la sesión y su gestión
         $this->session = new SessionManager();
+        $this->db = Database::getConexion();
     }
 
     /**
@@ -50,8 +52,7 @@ class AuthController
             if (empty($errores)) {
                 $hash = encriptar($password);
 
-                $db = Database::getConexion();
-                $stmt = $db->prepare(
+                $stmt = $this->db->prepare(
                     "INSERT INTO usuarios (user, email, password, nombre, rol) VALUES (?, ?, ?, ?, ?)"
                 );
 
@@ -81,8 +82,7 @@ class AuthController
             $user = recoge('user');
             $password = recoge('password');
 
-            $db = Database::getConexion();
-            $stmt = $db->prepare("SELECT * FROM usuarios WHERE user = ?");
+            $stmt = $this->db->prepare("SELECT * FROM usuarios WHERE user = ?");
             $stmt->execute([$user]);
             $usuario = $stmt->fetch(PDO::FETCH_OBJ); 
 

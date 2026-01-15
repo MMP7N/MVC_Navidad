@@ -5,6 +5,8 @@ class PadreController
     private SessionManager $session;
     private PDO $db;
     private Nino $ninoModel;
+    private Carta $cartaModel;
+    private Juguete $jugueteModel;
 
     public function __construct()
     {
@@ -22,6 +24,12 @@ class PadreController
 
         // Modelo Niño
         $this->ninoModel = new Nino($this->db);
+
+        // Modelo Carta
+        $this->cartaModel = new Carta($this->db);
+
+        // Modelo Juguete
+        $this->jugueteModel = new Juguete($this->db);
     }
 
     /**
@@ -87,8 +95,8 @@ class PadreController
             exit;
         }
 
-        $carta = Carta::getCartaByNino($idNino);
-        $juguetes = $carta ? Carta::getJuguetesCarta($carta['id']) : [];
+        $carta = $this->cartaModel->getCartaByNino($idNino);
+        $juguetes = $carta ? $this->cartaModel->getJuguetesCarta($carta['id']) : [];
 
         $titulo = "Carta de " . $nino->nombre;
         require __DIR__ . '/../templates/verCartaHijo.php';
@@ -107,10 +115,10 @@ class PadreController
             exit;
         }
 
-        $carta = Carta::getCartaByNino($idNino);
+        $carta = $this->cartaModel->getCartaByNino($idNino);
 
         if (!$carta) {
-            $idCarta = Carta::crearCarta($idNino);
+            $idCarta = $this->cartaModel->crearCarta($idNino);
         } else {
             $idCarta = $carta['id'];
         }
@@ -118,18 +126,18 @@ class PadreController
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $juguetesSeleccionados = recogeArray('juguetes');
 
-            Carta::quitarTodosJuguetes($idCarta);
+            $this->cartaModel->quitarTodosJuguetes($idCarta);
 
             foreach ($juguetesSeleccionados as $idJuguete) {
-                Carta::addJuguete($idCarta, (int)$idJuguete);
+                $this->cartaModel->addJuguete($idCarta, (int)$idJuguete);
             }
 
             header("Location: index.php?ctl=verCartaHijo&idNino=$idNino");
             exit;
         }
 
-        $juguetes = Juguete::getAll();
-        $juguetesEnCarta = Carta::getJuguetesCarta($idCarta);
+        $juguetes = $this->jugueteModel->getAll();
+        $juguetesEnCarta = $this->cartaModel->getJuguetesCarta($idCarta);
 
         $titulo = "Crear carta de $nino->nombre";
         $session = $this->session;
@@ -142,7 +150,7 @@ class PadreController
         $idCarta = (int)$_GET['idCarta'];
         $estado = $_GET['estado'];
 
-        Carta::setEstado($idCarta, $estado);
+        $this->cartaModel->setEstado($idCarta, $estado);
         header("Location: " . $_SERVER['HTTP_REFERER']);
         exit;
     }
@@ -152,7 +160,7 @@ class PadreController
         $idCarta = (int)$_GET['idCarta'];
         $idJuguete = (int)$_GET['idJuguete'];
 
-        Carta::quitarJuguete($idCarta, $idJuguete);
+        $this->cartaModel->quitarJuguete($idCarta, $idJuguete);
         header("Location: " . $_SERVER['HTTP_REFERER']);
         exit;
     }
