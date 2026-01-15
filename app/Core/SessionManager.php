@@ -18,8 +18,7 @@ class SessionManager
     // Niveles de acceso
     private const ROLE_GUEST     = 0;
     private const ROLE_PADRE     = 1;
-    private const ROLE_NINO      = 2;
-    private const ROLE_PAPANOEL  = 3;
+    private const ROLE_PAPANOEL  = 2;
 
     /**
      * Constructor: inicializa sesión y establece timeout
@@ -137,7 +136,6 @@ class SessionManager
 
     // Funciones convenientes para cada rol
     public function isPadre(): bool      { return $this->getUserLevel() === self::ROLE_PADRE; }
-    public function isNino(): bool       { return $this->getUserLevel() === self::ROLE_NINO; }
     public function isPapaNoel(): bool   { return $this->getUserLevel() === self::ROLE_PAPANOEL; }
 }
 ?>
